@@ -14,17 +14,18 @@ app.use(express.json());
 //!Route
 app.post("/generate-image", async (req, res) => {
   const { prompt } = req.body;
-  try{
+  try {
     const imageResponse = await getOpenAIClient().images.generate({
-        model: "gpt-image-1",
-        prompt: prompt,
-        n:1,
-        size: "1024x1024",
-        quality: "low"
-    })
-    res.json(imageResponse.data[0].url);
+      model: "gpt-image-1",
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "low"
+    });
+    const imageBase64 = imageResponse.data[0].b64_json;
+    res.json(`data:image/png;base64,${imageBase64}`);
   } catch (error) {
-    res.json({ message: "Error generating image" });
+    res.json({ message: "Error generating image", error: error.message });
   }
 });
 
